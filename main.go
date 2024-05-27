@@ -10,10 +10,9 @@ import (
 	"gorm.io/gorm"
 )
 
-type User struct {
-	ID    string `gorm:"primaryKey"` // Defines ID as the primary key.
-	Name  string `gorm:"not null"`   // Username must be unique and not null.
-	Email string `gorm:"unique"`
+type Passenger struct {
+	ID      string `gorm:"primaryKey"` // Defines ID as the primary key.
+	Balance int    `gorm:""`
 }
 
 type DBConfig struct {
@@ -43,13 +42,13 @@ func main() {
 		FiberApp: fiber.New(),
 		Config: &DBConfig{
 			Name:   "test",
-			Server: "localhost",
+			Server: "database-2.cf28yqm04h8y.us-east-1.rds.amazonaws.com",
 			Port:   3306,
 			Secrets: struct {
 				username string
 				password string
 			}{
-				username: "root",
+				username: "admin",
 				password: "BlackNigga", // Replace with your actual password
 			},
 		},
@@ -67,11 +66,12 @@ func main() {
 		wallet.InfoLog.Printf("Connected to MariaDB to Database: %s Port: %d", wallet.Config.Name, wallet.Config.Port)
 	}
 
-	if err := wallet.Config.DB.AutoMigrate(&User{}); err != nil {
+	if err := wallet.Config.DB.AutoMigrate(&Passenger{}); err != nil {
 		wallet.ErrorLog.Println("Error during AutoMigrate:", err)
 	} else {
 		wallet.InfoLog.Println("Database migration completed successfully.")
 	}
 
-	wallet.FiberApp.Listen(":3000")
+	StartServer(wallet)
+
 }
