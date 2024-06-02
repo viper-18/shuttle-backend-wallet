@@ -56,10 +56,13 @@ func (wallet *Application) deduct(c *fiber.Ctx) error {
 				"error": "Failed to update balance",
 			})
 		}
+		// Retrieve the updated balance
+
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Payment 15rs Successful",
+		"balance": passenger.Balance,
 	})
 }
 
@@ -92,6 +95,7 @@ func (wallet *Application) payment(c *fiber.Ctx) error {
 					"error": "Failed to create passenger",
 				})
 			}
+			passenger = newPassenger
 		} else {
 			// Other database error
 			wallet.ErrorLog.Printf("Database error: %v", result.Error)
@@ -108,9 +112,11 @@ func (wallet *Application) payment(c *fiber.Ctx) error {
 				"error": "Failed to update balance",
 			})
 		}
+		// Retrieve the updated balance
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Payment Successful",
+		"balance": passenger.Balance,
 	})
 }
